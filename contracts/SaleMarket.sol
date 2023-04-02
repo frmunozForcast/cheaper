@@ -151,13 +151,13 @@ contract SaleMarket {
 
     function buyWholeSale() public payable isUnlock{
         // deposit amount for a future whole sale at lower price
-        currentTotal.add(msg.value);
+        currentTotal = currentTotal.add(msg.value);
         if (!_addressExists(msg.sender)){
             interestAddresses.push(msg.sender);
-            interestList[msg.sender].add(msg.value);
+            interestList[msg.sender] = interestList[msg.sender].add(msg.value);
         }
         else {
-            interestList[msg.sender] = msg.value;
+            interestList[msg.sender] = interestList[msg.sender] = msg.value;
         }
         emit BuyWholeSale(
             msg.sender, msg.value, currentTotal, block.timestamp
