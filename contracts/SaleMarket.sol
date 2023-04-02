@@ -34,8 +34,15 @@ contract SaleMarket {
     event BuyWholeSale(
         address buyer, uint256 amount, uint256 wholeSaleAmount, uint256 date
     );
+
+    event ExecutedBuyWholeSale(
+        address seller, address buyer, uint256 amount,
+         uint256 price, uint256 tokens, uint256 date
+    );
+
     event BuyRetail(
-        address buyer, uint256 amount, uint256 commissioncharge, uint256 price, uint256 date
+        address seller, address buyer, uint256 amount, 
+        uint256 commissioncharge, uint256 price, uint256 tokens, uint256 date
     );
 
     modifier isOwner() {
@@ -184,7 +191,7 @@ contract SaleMarket {
         }
 
         emit BuyRetail(
-            msg.sender, msg.value, charge, saleConfig.retailPrice, block.timestamp
+            owner, msg.sender, msg.value, charge, saleConfig.retailPrice, nTokensToBuy, block.timestamp
         );
         return nTokensToBuy;
     }
@@ -220,6 +227,11 @@ contract SaleMarket {
                     interestList[interestAddresses[i]].add(actualTotal);
                     currentTotal = currentTotal.add(actualTotal);
                     totalSale = totalSale.sub(actualTotal);
+                } else {
+                    emit ExecutedBuyWholeSale(
+                        owner, interestAddresses[i], actualTotal, saleConfig.wholeSalePrice, 
+                        actualTotal.div(saleConfig.wholeSalePrice), block.timestamp
+                    );
                 }
             }
         }
