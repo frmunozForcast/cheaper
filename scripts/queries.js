@@ -19,7 +19,7 @@ function singUser(privateKey, messageSing = "sing user") {
 
 const getAccounts = async(env_process) => {
     let accounts = []
-    for (let [i, accountKey] of env_process.ACCOUNT_DMDOBER.split(',').entries()){
+    for (let [i, accountKey] of env_process.ACCOUNT_TEST.split(',').entries()){
         // * sign in
         accounts.push(singUser(accountKey));
     }

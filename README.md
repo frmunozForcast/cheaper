@@ -20,3 +20,17 @@ you can run tests with
 
 PENDING
 
+
+# Queries example
+
+to run the queries examples you must export and environment variable named `ACCOUNT_TEST` which containes your test accounts privatekeys in a single string, where each private key is separated by a single colon, no spaces.
+
+
+then you can run the script by
+
+```
+cd scripts/
+node queries.js
+```
+
+inside the script there are optional functions to deploy a token, which may helps to see some date on new deploys.
