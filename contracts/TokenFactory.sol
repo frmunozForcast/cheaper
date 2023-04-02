@@ -10,7 +10,7 @@ contract TokenFactory {
 
     uint256 private commissionFee;
     address private commissionAddress;
-
+    mapping(address => bool) tokensForSale;
 
     event ERC20TokenCreated(
         address tokenAddress, string name, string symbol, address owner, uint256 date);
@@ -46,6 +46,7 @@ contract TokenFactory {
     ) public returns(address){
         ERC20Token token = ERC20Token(tokenAddress);
         require(token.isOwner(msg.sender), "is not the owner of the token");
+        require(!tokensForSale[tokenAddress], "tokens is already open for sale!");
         SaleObject memory saleConfig;
         saleConfig.retailPrice = retailPrice;
         saleConfig.wholeSaleGoal = wholeSaleGoal;
@@ -53,10 +54,12 @@ contract TokenFactory {
 
         SaleMarket sm = new SaleMarket(
             tokenAddress, msg.sender, saleConfig, commissionFee, commissionAddress
-        );
+        ); 
+        tokensForSale[tokenAddress] = true;
 
         emit TokenForSale(
-            tokenAddress, msg.sender, address(sm), wholeSalePrice, retailPrice, wholeSaleGoal, block.timestamp
+            tokenAddress, msg.sender, address(sm), wholeSalePrice, retailPrice, 
+            wholeSaleGoal, block.timestamp
         );
 
         return address(sm);
