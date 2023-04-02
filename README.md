@@ -18,7 +18,11 @@ you can run tests with
 
 # Deploy
 
-PENDING
+to deploy just run the hardhat tast specifying the network, for example, to deploy on demoDober we run
+
+```npx hardhat --network demoDober deployFactory```
+
+it will print in console the address of the new deployed factory
 
 
 # Queries example
