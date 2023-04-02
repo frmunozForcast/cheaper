@@ -1,11 +1,14 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-import "@nomiclabs/hardhat-web3";
+// import "@nomiclabs/hardhat-web3";
 import "@nomiclabs/hardhat-ethers";
+require('hardhat-deploy');
 
 require('hardhat-contract-sizer');
-require('dotenv').config()
+require('dotenv').config({path: '.env'});
+
 import "./tasks/deployFactory"
+import "./tasks/accounts"
 
 const config: HardhatUserConfig = {
   solidity: "0.8.18",
@@ -31,22 +34,10 @@ module.exports = {
     only: [],
   },
   networks: {
-    demoDober: {
-      url: "http://35.202.9.103:9555",
-      accounts: 
-        process.env.ACCOUNT_DMDOBER?.split(',')
-    },
-    hardhat: {
-      accounts: {
-        initialIndex: 0,
-        count: 105,
-      },
-      hardfork: "london"
+    alfajores: {
+      url: "https://alfajores-forno.celo-testnet.org",
+      accounts: process.env.ACCOUNT_TEST?.split(','),
+      chainId: 44787
     }
-  },
-  etherscan: {
-    apiKey: {
-      goerli: process.env.GOERLI_PRIVATE_KEY
-    }
-  },
+  }
 }
