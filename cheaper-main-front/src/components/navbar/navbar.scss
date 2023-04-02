@@ -1,0 +1,83 @@
+.navbar{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding: 20px 0;
+    border: 1px solid #EFEFEF;
+
+    .start{
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        justify-content: start;
+        padding: 0 30px;
+        gap: 4rem;
+
+        ul{
+            list-style: none;
+            display: flex;
+            flex-direction: row;
+
+            li{
+                padding: 10px;
+            }
+
+            .item{
+                font-family: 'DM Sans';
+                font-weight: 500;
+                font-size: 24px;
+            }
+        }
+    }
+
+    .end{
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        justify-content: center;
+        gap: 2rem;
+
+        input{
+            border: 1px solid #0280908F;
+            border-radius: 100px;
+            color: #0280908F;
+            height: 62px;
+
+        }
+
+        .btn-register{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 18px 40px;
+            border: none;
+
+            color: white;
+            font-weight: 700;
+
+            width: 150px;
+            height: 62px;
+
+
+            background: #0E538C;
+            border-radius: 60px;
+
+        }
+
+        .btn-connect-wallet{
+            
+            color: #028090;
+            border: 1px solid #028090;
+            border-radius: 60px;
+            background: none;
+            width: 150px;
+            height: 62px;
+            font-weight: 700;
+        }
+
+    }
+
+}

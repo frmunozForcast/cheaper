@@ -1,0 +1,70 @@
+.content-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 120px;
+    padding: 0px;
+
+    .top-banner{
+        display: flex;
+        flex-direction: row;
+        background: linear-gradient(90deg, #E9D5CA -53.98%, rgba(217, 217, 217, 0) 100%);
+        padding: 4rem;
+
+        .left{
+            width: 50%;
+            
+            .text{
+                h1{
+                    font-size: 64px;
+                    font-family: 'Poppins';
+        
+                    background: linear-gradient(180deg, #0E538C 0%, #38A3A5 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    text-fill-color: transparent;
+                }
+            }
+    
+            .btn-vendor{
+                width: 420px;
+                height: 86px;
+                background: #0E538C;
+                border-radius: 42px;
+                color: white;
+                border: none;
+                font-weight: 600;
+                font-family: 'Popins';
+                font-size: 32px;
+            }
+    
+            .powered-by{
+                display: flex;
+                flex-direction: row;
+                gap: 5px;
+                
+                p{
+                    font-size: 24px;
+                    font-weight: 700;
+                    font-family: 'DM Sans';
+                    letter-spacing: 0.04em;
+                }
+            }
+            
+        }
+    
+        .banner{
+    
+        }
+
+    }
+
+
+    .items{
+        padding: 50px;
+        display: flex;
+        flex-flow: row wrap;
+        gap: 4rem;
+    }
+}
