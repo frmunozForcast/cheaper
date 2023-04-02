@@ -4,6 +4,7 @@ Marketplace project designed for challegen ---
 
 # How to build
 
+this code only works on node v14
 to build this project first install the node parackages
 
 ```npm install .```
