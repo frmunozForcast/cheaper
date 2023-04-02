@@ -66,6 +66,7 @@ contract SaleMarket {
         commissionFee = _commissionFee;
         commissionAddress = payable(_commissionAddress);
         lockSale = false;
+        currentTotal = 0;
     }
 
     function _addressExists(address user) internal view returns(bool){
@@ -148,13 +149,15 @@ contract SaleMarket {
         );
     }
 
-    function buyWholeSale() external payable isUnlock {
+    function buyWholeSale() public payable isUnlock{
         // deposit amount for a future whole sale at lower price
-        
-        interestList[msg.sender].add(msg.value);
         currentTotal.add(msg.value);
         if (!_addressExists(msg.sender)){
             interestAddresses.push(msg.sender);
+            interestList[msg.sender].add(msg.value);
+        }
+        else {
+            interestList[msg.sender] = msg.value;
         }
         emit BuyWholeSale(
             msg.sender, msg.value, currentTotal, block.timestamp
@@ -191,6 +194,8 @@ contract SaleMarket {
     }
 
     function executeWholeSale() external payable isOwner {
+        // check that goal is met
+        require (saleConfig.wholeSaleGoal <= currentTotal, "goal for wholeSale not net");
         // execute the wholeSale with the special prices
         lockSale = true;
         uint256 res;
