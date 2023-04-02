@@ -6,7 +6,7 @@ pragma solidity >=0.8.9;
 import "./ERC20Token.sol";
 import {SaleMarket} from "./SaleMarket.sol";
 import { SaleObject} from "./Library.sol";
-contract Factory {
+contract TokenFactory {
 
     uint256 private commissionFee;
     address private commissionAddress;
