@@ -18,7 +18,7 @@ contract MarketCheaper {
     mapping(address => mapping(address => SaleObject)) usersTokenSales;
     
     event saleProperty(
-        address seller, address token, uint256 price, uint256 unit, 
+        address seller, address token, uint256 retailPrice, uint256 whilesalerPrice, 
         uint256 date);
     event buyRecord(
         address seller, address buyer, address token, uint256 amount, 
@@ -57,59 +57,59 @@ contract MarketCheaper {
         success = payable(_to).send(_amount);
     }
 
-    function setSaleProperties(
-        address tokenAddress, 
-        uint256 newPrice,
-        uint256 newMinDivision
-    ) external {
-        usersTokenSales[msg.sender][tokenAddress].token_price = newPrice;
-        usersTokenSales[msg.sender][tokenAddress].min_unit = newMinDivision;
-        emit saleProperty(
-            msg.sender, tokenAddress, newPrice, newMinDivision, 
-            block.timestamp);
-    }
+    // function setSaleProperties(
+    //     address tokenAddress, 
+    //     uint256 retailPrice,
+    //     uint256 wholesalerPrice
+    // ) external {
+    //     usersTokenSales[msg.sender][tokenAddress].retail_price = retailPrice;
+    //     usersTokenSales[msg.sender][tokenAddress].wholesaler_price = wholesalerPrice;
+    //     emit saleProperty(
+    //         msg.sender, tokenAddress, retailPrice, wholesalerPrice,
+    //         block.timestamp);
+    // }
 
-    function getSaleProperties(
-        address tokenAddress, 
-        address seller
-    ) external view returns(
-        uint256 price,
-        uint256 minUnit
-    ){
-        // additional getter to the event emits
-        price = usersTokenSales[seller][tokenAddress].token_price;
-        minUnit = usersTokenSales[seller][tokenAddress].min_unit;
-    }
+    // function getSaleProperties(
+    //     address tokenAddress, 
+    //     address seller
+    // ) external view returns(
+    //     uint256 price,
+    //     uint256 minUnit
+    // ){
+    //     // additional getter to the event emits
+    //     price = usersTokenSales[seller][tokenAddress].token_price;
+    //     minUnit = usersTokenSales[seller][tokenAddress].min_unit;
+    // }
 
-    function buyToken( 
-        uint256 nTokenToBuy, 
-        address seller, address tokenAddress
-    ) payable external {
-        // check nTokenToBuy multipl of minUnit
-        require(nTokenToBuy % usersTokenSales[seller][tokenAddress].min_unit == 0,
-                "nTokenToBuy is not divisible by the minimum division part");
-        // check eth amount match total price to pay
-        require( msg.value >= usersTokenSales[seller][tokenAddress].token_price.mul(nTokenToBuy), 
-                "ether paid less than expected amount");
-        // check user has the requested balance
-        require(_balanceValidation(nTokenToBuy, seller, tokenAddress),
-                "token amount not available");
-        // check user has autorized the requested value
-        require(_allowanceValidation(nTokenToBuy, seller, tokenAddress),
-                "token allowance not available");
+    // function buyToken( 
+    //     uint256 nTokenToBuy, 
+    //     address seller, address tokenAddress
+    // ) payable external {
+    //     // check nTokenToBuy multipl of minUnit
+    //     require(nTokenToBuy % usersTokenSales[seller][tokenAddress].min_unit == 0,
+    //             "nTokenToBuy is not divisible by the minimum division part");
+    //     // check eth amount match total price to pay
+    //     require( msg.value >= usersTokenSales[seller][tokenAddress].token_price.mul(nTokenToBuy), 
+    //             "ether paid less than expected amount");
+    //     // check user has the requested balance
+    //     require(_balanceValidation(nTokenToBuy, seller, tokenAddress),
+    //             "token amount not available");
+    //     // check user has autorized the requested value
+    //     require(_allowanceValidation(nTokenToBuy, seller, tokenAddress),
+    //             "token allowance not available");
         
-        IERC20 token = IERC20(tokenAddress);
-        token.transferFrom(seller, msg.sender, nTokenToBuy);
+    //     IERC20 token = IERC20(tokenAddress);
+    //     token.transferFrom(seller, msg.sender, nTokenToBuy);
 
-        uint256 charge = comissionFee.mul(msg.value).div(100);
-        uint256 amountToSeller = msg.value.sub(charge);
+    //     uint256 charge = comissionFee.mul(msg.value).div(100);
+    //     uint256 amountToSeller = msg.value.sub(charge);
 
-        _transferTo(seller, amountToSeller);
-        //Se cobra comision
-        _transferTo(comissionOwner, charge);
-        emit buyRecord(
-            seller, msg.sender, tokenAddress, nTokenToBuy, 
-            usersTokenSales[seller][tokenAddress].token_price, msg.value, 
-            charge, block.timestamp);
-    }
+    //     _transferTo(seller, amountToSeller);
+    //     //Se cobra comision
+    //     _transferTo(comissionOwner, charge);
+    //     emit buyRecord(
+    //         seller, msg.sender, tokenAddress, nTokenToBuy, 
+    //         usersTokenSales[seller][tokenAddress].token_price, msg.value, 
+    //         charge, block.timestamp);
+    // }
 }
