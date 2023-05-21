@@ -4,9 +4,10 @@ const fs = require("fs");
 const Web3 = require("web3");
 let web3 = new Web3();
 
-const tokenFactoryAddress = "0x963D8CE362599Dc8150B22a5FD544843AC3A270d"
-const abiPath = "./abi/"
-const RPC = "http://35.202.9.103:9555"
+require('dotenv').config();
+
+// const tokenFactoryAddress = process.env.FACTORY_ADDRESS;
+const abiPath = "./abi/";
 
 function singUser(privateKey, messageSing = "sing user") {
     web3.eth.accounts.sign(messageSing, privateKey);
@@ -15,6 +16,10 @@ function singUser(privateKey, messageSing = "sing user") {
         address: objectOut.address,
         privateKey: objectOut.privateKey
     };
+}
+
+function factoryAddress() {
+    return process.env.FACTORY_ADDRESS
 }
 
 const getAccounts = async(env_process) => {
@@ -26,94 +31,10 @@ const getAccounts = async(env_process) => {
     return accounts;
 }
 
-// FOR TESTING 
-const deployToken = async (user) => {
-    let abi = JSON.parse(fs.readFileSync(abiPath + "TokenFactory.json"));
-    let tfinst = new web3.eth.Contract(abi, tokenFactoryAddress);
-
-    let estimateGas;
-    let ok = true;
-    await tfinst.methods
-        .deployNewERC20Token("testTokenB", "TTB", "10000")
-        .estimateGas({from: user.address})
-        .then(function(gasAmount){
-            console.log("gas estimante :", gasAmount);
-            estimateGas = gasAmount;
-        }).catch(function(err){
-            console.error("gas estimate :", err);
-            ok = false;
-        });
-    console.log("estimate gas", ok, estimateGas);
-    if (ok){
-        let txData = {
-            from: user.address,
-            to: tfinst._address,
-            gas: estimateGas,
-            data: tfinst.methods.deployNewERC20Token("testTokenB", "TTB", "10000").encodeABI()
-        }
-        await web3.eth.accounts.signTransaction(txData, user.privateKey)
-            .then(async (signature) => {
-                await web3.eth.sendSignedTransaction(signature.rawTransaction)
-                    .then(async (txresponse) => {
-                        console.log("txResponse", txresponse);
-                    })
-                    .catch((err) => {
-                        console.error("Send :", err);
-                        ok = false;
-                    });
-            }).catch( (err) => {
-                console.error("Sign :", err);
-                ok = false;
-            });
-    }
-}
-
-const putForSale = async (user, tokenAddress, retailPrice, wholeSalePrice, goal) => {
-    let abi = JSON.parse(fs.readFileSync(abiPath + "TokenFactory.json"));
-    let tfinst = new web3.eth.Contract(abi, tokenFactoryAddress);
-    console.log(retailPrice, wholeSalePrice, goal);
-    let estimateGas;
-    let ok = true;
-
-    await tfinst.methods
-        .putTokenForSale(tokenAddress, goal, wholeSalePrice, retailPrice)
-        .estimateGas({from: user.address})
-        .then(function(gasAmount){
-            console.log("gas estimante :", gasAmount);
-            estimateGas = gasAmount;
-        }).catch(function(err){
-            console.error("gas estimate :", err);
-            ok = false;
-        });
-    console.log("estimate gas", ok, estimateGas);
-    if (ok){
-        let txData = {
-            from: user.address,
-            to: tfinst._address,
-            gas: estimateGas,
-            data: tfinst.methods.putTokenForSale(tokenAddress, goal, wholeSalePrice, retailPrice).encodeABI()
-        }
-        await web3.eth.accounts.signTransaction(txData, user.privateKey)
-            .then(async (signature) => {
-                await web3.eth.sendSignedTransaction(signature.rawTransaction)
-                    .then(async (txresponse) => {
-                        console.log("txResponse", txresponse);
-                    })
-                    .catch((err) => {
-                        console.error("Send :", err);
-                        ok = false;
-                    });
-            }).catch( (err) => {
-                console.error("Sign :", err);
-                ok = false;
-            });
-    }
-}
-
 // - Tokens que ha creado
 const queryCreatedTokens = async (userAddress, startBlock) => {
     let abi = JSON.parse(fs.readFileSync(abiPath + "TokenFactory.json"));
-    let tfinst = new web3.eth.Contract(abi, tokenFactoryAddress);
+    let tfinst = new web3.eth.Contract(abi, factoryAddress());
     let tokensList = []
     await tfinst.getPastEvents("ERC20TokenCreated", {fromBlock: startBlock})
         .then(async (events) => {
@@ -139,7 +60,7 @@ const queryCreatedTokens = async (userAddress, startBlock) => {
 //- Tokens que ha puesto a la venta
 const querySaleTokens = async (userAddress, startBlock) => {
     let abi = JSON.parse(fs.readFileSync(abiPath + "TokenFactory.json"));
-    let tfinst = new web3.eth.Contract(abi, tokenFactoryAddress);
+    let tfinst = new web3.eth.Contract(abi, factoryAddress());
     let tokensForSale = [];
     await tfinst.getPastEvents("TokenForSale", {fromBlock: startBlock})
         .then(async (events) => {
@@ -246,7 +167,7 @@ const queryBuyHistory = async (userAddress, startBlock) => {
     let abi = JSON.parse(fs.readFileSync(abiPath + "TokenFactory.json"));
     let tokenAbi = JSON.parse(fs.readFileSync(abiPath + "ERC20Token.json"));
     let smAbi = JSON.parse(fs.readFileSync(abiPath + "SaleMarket.json"));
-    let tfinst = new web3.eth.Contract(abi, tokenFactoryAddress);
+    let tfinst = new web3.eth.Contract(abi, factoryAddress());
     await tfinst.getPastEvents("TokenForSale", {fromBlock: startBlock})
         .then(async (events) => {
             if (events.length > 0){
@@ -322,7 +243,7 @@ const queryBuyHistory = async (userAddress, startBlock) => {
 // -- cosas disponible a comprar
 const queryAvailableTokensToBuy = async (startBlock) => {
     let abi = JSON.parse(fs.readFileSync(abiPath + "TokenFactory.json"));
-    let tfinst = new web3.eth.Contract(abi, tokenFactoryAddress);
+    let tfinst = new web3.eth.Contract(abi, factoryAddress());
     let tokensForSale = [];
     await tfinst.getPastEvents("TokenForSale", {fromBlock: startBlock})
         .then(async (events) => {
@@ -346,16 +267,12 @@ const queryAvailableTokensToBuy = async (startBlock) => {
 
 const main = async () => {
     console.log("setting provider")
-    web3.setProvider(new web3.providers.HttpProvider(RPC));
+    web3.setProvider(new web3.providers.HttpProvider(process.env.RPC));
     console.log("getting accounts")
-    // console.log("process", process.env);
+    console.log("process", process.env);
     let accounts = await getAccounts(process.env);
     console.log("accounts", accounts);
 
-    // -------------
-    // console.log("deploy test token");
-    // await deployToken(accounts[1]);
-    // --------------
 
     // specify block so it does not take too much time, we know that no events can be found
     // before block 35300;
@@ -363,17 +280,6 @@ const main = async () => {
     let tokenList = await queryCreatedTokens(accounts[1].address, startBlock);
     console.log("tokenList", tokenList);
 
-    //--------------------
-    // put for sale (ONLY TEST)
-    // let retailPrice = web3.utils.toBN(web3.utils.toWei("0.05"))
-    // let wholesalePrice = web3.utils.toBN(web3.utils.toWei("0.045"))
-    // let goal = wholesalePrice.mul(web3.utils.toBN(500))
-    // await putForSale(
-    //     accounts[1], tokenList[1].tokenAddress, 
-    //     retailPrice.toString(), 
-    //     wholesalePrice.toString(), 
-    //     goal.toString());
-    //--------------------
     let tokensForSale = await querySaleTokens(accounts[1].address, startBlock);
     console.log("tokensForSale", tokensForSale);
 

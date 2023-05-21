@@ -24,6 +24,16 @@ module.exports = {
         enabled: true,
         runs: 10,
       },
+      outputSelection: {
+        "*": {
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "metadata"
+          ]
+        },
+      },
     },
   },
   contractSizer: {
@@ -36,7 +46,7 @@ module.exports = {
   networks: {
     alfajores: {
       url: "https://alfajores-forno.celo-testnet.org",
-      accounts: process.env.ACCOUNT_TEST?.split(','),
+      accounts: process.env.ACCOUNT_CELO?.split(','),
       chainId: 44787
     }
   }
